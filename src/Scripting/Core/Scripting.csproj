@@ -15,6 +15,9 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup Label="Linked Files">
+    <Compile Include="..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="..\..\Compilers\Helpers\GlobalAssemblyCacheHelpers\FusionAssemblyIdentity.cs">
       <Link>FusionAssemblyIdentity.cs</Link>
     </Compile>
@@ -66,6 +69,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>TRACE;SCRIPTING</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

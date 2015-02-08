@@ -50,7 +50,13 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>..\CodeAnalysisRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="AdditionalTextFile.cs" />
     <Compile Include="AnalyzerLoadFailureEventArgs.cs" />
     <Compile Include="AssemblyReferenceResolver.cs" />

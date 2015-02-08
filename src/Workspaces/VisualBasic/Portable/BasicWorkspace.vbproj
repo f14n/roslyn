@@ -71,6 +71,9 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.VisualBasic.EditorFeatures" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.VisualBasic.Features" />
@@ -85,6 +88,9 @@
     <InternalsVisibleToTest Include="Roslyn.VisualStudio.Services.UnitTests" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.vb">
+      <Link>3rdPartyInternalsVisibleTo.vb</Link>
+    </Compile>
     <Compile Include="CaseCorrection\VisualBasicCaseCorrectionService.Rewriter.vb" />
     <Compile Include="CaseCorrection\VisualBasicCaseCorrectionService.vb" />
     <Compile Include="CaseCorrection\VisualBasicCaseCorrectionServiceFactory.vb" />

@@ -48,6 +48,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Label="Linked Files">
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\Compilers\Core\Portable\Collections\ImmutableArrayExtensions.cs">
       <Link>InternalUtilities\ImmutableArrayExtensions.cs</Link>
     </Compile>
@@ -231,6 +234,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSBuildAssemblyNameFragment)' == 'v12.0'">
     <DefineConstants>$(DefineConstants);MSBUILD12</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" />

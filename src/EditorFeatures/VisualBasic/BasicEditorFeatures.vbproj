@@ -69,7 +69,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DogfoodRelease|AnyCPU'">
     <DocumentationFile>Microsoft.CodeAnalysis.VisualBasic.EditorFeatures.xml</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\3rdPartyInternalsVisibleTo.vb">
+      <Link>3rdPartyInternalsVisibleTo.vb</Link>
+    </Compile>
     <Compile Include="AutomaticCompletion\AutomaticLineEnderCommandHandler.vb" />
     <Compile Include="AutomaticCompletion\Sessions\CurlyBraceCompletionSession.vb" />
     <Compile Include="AutomaticCompletion\Sessions\BracketCompletionSession.vb" />

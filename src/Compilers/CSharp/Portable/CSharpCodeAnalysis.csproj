@@ -76,7 +76,13 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>..\CSharpCodeAnalysisRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="Binder\AliasAndExternAliasDirective.cs" />
     <Compile Include="Binder\AliasAndUsingDirective.cs" />
     <Compile Include="Binder\Binder.cs" />

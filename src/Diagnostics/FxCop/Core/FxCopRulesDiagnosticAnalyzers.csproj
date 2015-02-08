@@ -40,6 +40,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -99,6 +102,9 @@
     <InternalsVisibleToTest Include="RoslynTaoActions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="AbstractNamedTypeAnalyzer.cs" />
     <Compile Include="CodeFixProviderBase.cs" />
     <Compile Include="DiagnosticCustomTags.cs" />

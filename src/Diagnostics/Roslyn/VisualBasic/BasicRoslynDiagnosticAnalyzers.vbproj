@@ -59,6 +59,9 @@
     <RootNamespace>
     </RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -94,6 +97,9 @@
     <Folder Include="My Project\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.vb">
+      <Link>3rdPartyInternalsVisibleTo.vb</Link>
+    </Compile>
     <Compile Include="Documentation\BasicDoNotUseVerbatimCrefsAnalyzer.vb" />
     <Compile Include="Maintainability\BasicUnusedDeclarationsAnalyzer.vb" />
     <Compile Include="Performance\BasicDiagnosticDescriptorAccessAnalyzer.vb" />

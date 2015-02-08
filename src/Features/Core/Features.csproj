@@ -66,6 +66,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="InteractiveHost" />
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" />
@@ -101,6 +104,9 @@
     <InternalsVisibleToTest Include="Roslyn.VisualStudio.CSharp.UnitTests" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="AddMissingReference\CodeAction.cs" />
     <Compile Include="ChangeSignature\AbstractChangeSignatureCodeRefactoringProvider.cs" />
     <Compile Include="ChangeSignature\AbstractChangeSignatureService.cs" />

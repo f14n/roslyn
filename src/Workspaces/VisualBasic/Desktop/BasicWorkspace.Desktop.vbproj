@@ -76,10 +76,16 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Folder Include="My Project\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.vb">
+      <Link>3rdPartyInternalsVisibleTo.vb</Link>
+    </Compile>
     <Compile Include="LanguageServices\VisualBasicCommandLineArgumentsFactoryService.vb" />
     <Compile Include="MSBuild\VisualBasicProjectFileLoader.vb" />
     <Compile Include="MSBuild\VisualBasicProjectFileLoaderFactory.vb" />

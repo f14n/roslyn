@@ -88,8 +88,14 @@
     <PlatformTarget>x64</PlatformTarget>
     <CodeAnalysisRuleSet>..\BasicCodeAnalysisRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(IntermediateOutputPath)BoundNodes.xml.Generated.vb" />
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.vb">
+      <Link>3rdPartyInternalsVisibleTo.vb</Link>
+    </Compile>
     <Compile Include="Analysis\Analyzer.vb" />
     <Compile Include="Analysis\FlowAnalysis\AbstractFlowPass.AbstractLocalState.vb" />
     <Compile Include="Analysis\FlowAnalysis\AbstractFlowPass.NestedTypes.vb" />

@@ -72,6 +72,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DogfoodRelease|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.VisualStudio.LanguageServices.CSharp" />
     <InternalsVisibleTo Include="Roslyn.VisualStudio.CSharp.Repl" />
@@ -82,6 +85,9 @@
     <InternalsVisibleToTest Include="Roslyn.Services.Editor.UnitTests2" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="AutomaticCompletion\AutomaticLineEnderCommandHandler.cs" />
     <Compile Include="AutomaticCompletion\CSharpBraceCompletionSessionProvider.cs" />
     <Compile Include="AutomaticCompletion\Sessions\CurlyBraceCompletionSession.cs" />

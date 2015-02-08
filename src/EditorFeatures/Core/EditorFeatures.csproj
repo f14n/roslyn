@@ -49,6 +49,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.CoreUtility, Version=$(VisualStudioReferenceAssemblyVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.ImageCatalog, Version=$(VisualStudioReferenceAssemblyVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -133,6 +136,9 @@
     <InternalsVisibleToTest Include="RoslynTaoActions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="CommandArgs.cs" />
     <Compile Include="CommandHandlers\AbstractCompletionCommandHandler.cs" />
     <Compile Include="CommandHandlers\AbstractIntelliSenseCommandHandler.cs" />

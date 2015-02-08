@@ -21,6 +21,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup Label="File References">
     <Reference Include="..\..\..\..\packages\System.Collections.Immutable.1.1.33-beta\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll" />
   </ItemGroup>
@@ -72,6 +75,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\3rdPartyInternalsVisibleTo.cs">
+      <Link>3rdPartyInternalsVisibleTo.cs</Link>
+    </Compile>
     <Compile Include="ApiDesign\CancellationTokenMustBeLastCodeFixProvider.cs" />
     <Compile Include="Documentation\CSharpDoNotUseVerbatimCrefsAnalyzer.cs" />
     <Compile Include="Reliability\CSharpDoNotCreateTasksWithoutTaskSchedulerAnalyzer.cs" />
