@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -27,42 +28,65 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Workspaces
             _unknownContentType = contentTypeRegistryService.UnknownContentType;
         }
 
+        private static readonly Encoding ThrowingUtf8Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+
         public SourceText CreateText(Stream stream, Encoding defaultEncoding, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var encoding = EncodedStringText.TryReadByteOrderMark(stream)
-                ?? defaultEncoding
-                ?? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+            // this API is for a case where user wants us to figure out encoding from the given stream.
+            // if defaultEncoding is given, we will use it if we couldn't figure out encoding used in the stream ourselves.
+            Debug.Assert(stream != null);
+            Debug.Assert(stream.CanSeek);
+            Debug.Assert(stream.CanRead);
 
-            // Close the stream here since we might throw an exception trying to determine the encoding
-            using (stream)
+            if (defaultEncoding == null)
             {
-                return CreateTextInternal(stream, encoding, cancellationToken)
-                    ?? CreateTextInternal(stream, Encoding.Default, cancellationToken);
+                // Try UTF-8
+                try
+                {
+                    return CreateTextInternal(stream, ThrowingUtf8Encoding, cancellationToken);
+                }
+                catch (DecoderFallbackException)
+                {
+                    // Try Encoding.Default
+                    defaultEncoding = Encoding.Default;
+                }
+            }
+
+            try
+            {
+                return CreateTextInternal(stream, defaultEncoding, cancellationToken);
+            }
+            catch (DecoderFallbackException)
+            {
+                return null;
             }
         }
 
         public SourceText CreateText(TextReader reader, Encoding encoding, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var buffer = _textBufferFactory.CreateTextBuffer(reader, _unknownContentType);
-            return buffer.CurrentSnapshot.AsRoslynText(encoding ?? Encoding.UTF8);
+            // this API is for a case where user just wants to create a source text with explicit encoding.
+            var buffer = CreateTextBuffer(reader, cancellationToken);
+
+            // use the given encoding as it is.
+            return buffer.CurrentSnapshot.AsRoslynText(encoding);
+        }
+
+        private ITextBuffer CreateTextBuffer(TextReader reader, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return _textBufferFactory.CreateTextBuffer(reader, _unknownContentType);
         }
 
         private SourceText CreateTextInternal(Stream stream, Encoding encoding, CancellationToken cancellationToken)
         {
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                stream.Seek(0, SeekOrigin.Begin);
+            cancellationToken.ThrowIfCancellationRequested();
+            stream.Seek(0, SeekOrigin.Begin);
 
-                using (var reader = new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true))
-                {
-                    return CreateText(reader, reader.CurrentEncoding, cancellationToken);
-                }
-            }
-            catch (DecoderFallbackException) when (encoding != Encoding.Default)
+            using (var reader = new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true))
             {
-                return null;
+                var buffer = CreateTextBuffer(reader, cancellationToken);
+                return buffer.CurrentSnapshot.AsRoslynText(reader.CurrentEncoding ?? Encoding.UTF8);
             }
         }
     }
 }
+

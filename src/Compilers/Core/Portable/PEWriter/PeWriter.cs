@@ -21,15 +21,15 @@ namespace Microsoft.Cci
         private readonly bool _deterministic;
 
         private readonly IModule _module;
-        private readonly PdbWriter _pdbWriter;
+        private readonly PdbWriter _nativePdbWriter;
         private readonly bool _emitRuntimeStartupStub;
         private readonly uint _sizeOfImportAddressTable;
 
-        private PeWriter(IModule module, PdbWriter pdbWriter, bool deterministic)
+        private PeWriter(IModule module, PdbWriter nativePdbWriter, bool deterministic)
         {
             _module = module;
             _emitRuntimeStartupStub = module.RequiresStartupStub;
-            _pdbWriter = pdbWriter;
+            _nativePdbWriter = nativePdbWriter;
             _deterministic = deterministic;
             _sizeOfImportAddressTable = _emitRuntimeStartupStub ? (!_module.Requires64bits ? 8u : 16u) : 0;
         }
@@ -58,29 +58,29 @@ namespace Microsoft.Cci
         public static void WritePeToStream(
             EmitContext context,
             CommonMessageProvider messageProvider,
-            Stream stream,
-            PdbWriter pdbWriterOpt,
+            Stream peStream,
+            PdbWriter nativePdbWriterOpt,
             bool allowMissingMethodBodies,
             bool deterministic,
             CancellationToken cancellationToken)
         {
-            var peWriter = new PeWriter(context.Module, pdbWriterOpt, deterministic);
+            var peWriter = new PeWriter(context.Module, nativePdbWriterOpt, deterministic);
 
             var mdWriter = FullMetadataWriter.Create(context, messageProvider, allowMissingMethodBodies, deterministic, cancellationToken);
 
-            if (pdbWriterOpt != null)
+            if (nativePdbWriterOpt != null)
             {
-                pdbWriterOpt.SetMetadataEmitter(mdWriter);
+                nativePdbWriterOpt.SetMetadataEmitter(mdWriter);
             }
 
             uint entryPointToken;
-            peWriter.WritePeToStream(mdWriter, pdbWriterOpt, stream, out entryPointToken);
+            peWriter.WritePeToStream(mdWriter, peStream, nativePdbWriterOpt, out entryPointToken);
 
-            if (pdbWriterOpt != null)
+            if (nativePdbWriterOpt != null)
             {
                 if (entryPointToken != 0)
                 {
-                    pdbWriterOpt.SetEntryPoint(entryPointToken);
+                    nativePdbWriterOpt.SetEntryPoint(entryPointToken);
                 }
 
                 var assembly = context.Module.AsAssembly;
@@ -88,12 +88,12 @@ namespace Microsoft.Cci
                 {
                     // Dev12: If compiling to winmdobj, we need to add to PDB source spans of
                     //        all types and members for better error reporting by WinMDExp.
-                    pdbWriterOpt.WriteDefinitionLocations(context.Module.GetSymbolToLocationMap());
+                    nativePdbWriterOpt.WriteDefinitionLocations(context.Module.GetSymbolToLocationMap());
                 }
             }
         }
 
-        private void WritePeToStream(MetadataWriter mdWriter, PdbWriter pdbWriterOpt, Stream peStream, out uint entryPointToken)
+        private void WritePeToStream(MetadataWriter mdWriter, Stream peStream, PdbWriter nativePdbWriterOpt, out uint entryPointToken)
         {
             // TODO: we can precalculate the exact size of IL stream
             var ilBuffer = new MemoryStream(32 * 1024);
@@ -119,7 +119,7 @@ namespace Microsoft.Cci
 
             MetadataSizes metadataSizes;
             mdWriter.SerializeMetadataAndIL(
-                pdbWriterOpt,
+                nativePdbWriterOpt,
                 metadataWriter,
                 ilWriter,
                 mappedFieldDataWriter,
@@ -305,12 +305,12 @@ namespace Microsoft.Cci
 
         private uint ComputeSizeOfDebugTable(uint offsetToMetadata)
         {
-            if (_pdbWriter == null)
+            if (_nativePdbWriter == null)
             {
                 return 0;
             }
 
-            _debugDirectory = _pdbWriter.GetDebugDirectory();
+            _debugDirectory = _nativePdbWriter.GetDebugDirectory();
             _debugDirectory.TimeDateStamp = _ntHeader.TimeDateStamp;
             _debugDirectory.PointerToRawData = offsetToMetadata + 0x1c;
             return 0x1c + (uint)_debugDirectory.Data.Length;
@@ -436,8 +436,8 @@ namespace Microsoft.Cci
             ntHeader.CertificateTable.Size = 0;
             ntHeader.CopyrightTable.RelativeVirtualAddress = 0;
             ntHeader.CopyrightTable.Size = 0;
-            ntHeader.DebugTable.RelativeVirtualAddress = _pdbWriter == null ? 0u : _textSection.RelativeVirtualAddress + this.ComputeOffsetToDebugTable(metadataSizes);
-            ntHeader.DebugTable.Size = _pdbWriter == null ? 0u : 0x1c; // Only the size of the fixed part of the debug table goes here.
+            ntHeader.DebugTable.RelativeVirtualAddress = _nativePdbWriter == null ? 0u : _textSection.RelativeVirtualAddress + this.ComputeOffsetToDebugTable(metadataSizes);
+            ntHeader.DebugTable.Size = _nativePdbWriter == null ? 0u : 0x1c; // Only the size of the fixed part of the debug table goes here.
             ntHeader.DelayImportTable.RelativeVirtualAddress = 0;
             ntHeader.DelayImportTable.Size = 0;
             ntHeader.ExceptionTable.RelativeVirtualAddress = 0;

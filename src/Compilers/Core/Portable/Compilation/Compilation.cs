@@ -1508,7 +1508,7 @@ namespace Microsoft.CodeAnalysis
                 }
 
                 bool success = SerializeToPeStream(
-                    (Cci.IModule)moduleBeingBuilt,
+                    moduleBeingBuilt,
                     peStream,
                     options.PdbFilePath,
                     pdbStream,
@@ -1527,7 +1527,7 @@ namespace Microsoft.CodeAnalysis
         }
 
         internal bool SerializeToPeStream(
-            Cci.IModule moduleBeingBuilt,
+            CommonPEModuleBuilder moduleBeingBuilt,
             Stream executableStream,
             string pdbFileName,
             Stream pdbStream,
@@ -1543,7 +1543,7 @@ namespace Microsoft.CodeAnalysis
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                Cci.PdbWriter pdbWriter = null;
+                Cci.PdbWriter nativePdbWriter = null;
                 Stream signingInputStream = null;
                 DiagnosticBag metadataDiagnostics = null;
                 DiagnosticBag pdbBag = null;
@@ -1556,7 +1556,7 @@ namespace Microsoft.CodeAnalysis
                 {
                     if (pdbStream != null)
                     {
-                        // PDB writer is able to update an existing stream.
+                        // Native PDB writer is able to update an existing stream.
                         // It checks for length to determine whether the given stream has existing data to be updated,
                         // or whether it should start writing PDB data from scratch. Thus if not writing to a seekable empty stream ,
                         // let's create an in-memory temp stream for the PDB writer and copy all data to the actual stream at once at the end.
@@ -1565,7 +1565,7 @@ namespace Microsoft.CodeAnalysis
                             pdbTempStream = new MemoryStream();
                         }
 
-                        pdbWriter = new Cci.PdbWriter(
+                        nativePdbWriter = new Cci.PdbWriter(
                             pdbFileName ?? FileNameUtilities.ChangeExtension(SourceModule.Name, "pdb"),
                             pdbTempStream ?? pdbStream,
                             testSymWriterFactory);
@@ -1601,10 +1601,10 @@ namespace Microsoft.CodeAnalysis
                     try
                     {
                         Cci.PeWriter.WritePeToStream(
-                            new EmitContext(moduleBeingBuilt, null, metadataDiagnostics),
+                            new EmitContext((Cci.IModule)moduleBeingBuilt, null, metadataDiagnostics),
                             this.MessageProvider,
                             peTempStream ?? peStream,
-                            pdbWriter,
+                            nativePdbWriter,
                             metadataOnly,
                             deterministic,
                             cancellationToken);
@@ -1617,9 +1617,9 @@ namespace Microsoft.CodeAnalysis
 
                         if (pdbTempStream != null)
                         {
-                            // Note: PDB writer may operate on the underlying stream during disposal.
+                            // Note: Native PDB writer may operate on the underlying stream during disposal.
                             // So close it here before we read data from the underlying stream.
-                            pdbWriter.Close();
+                            nativePdbWriter?.Close();
 
                             pdbTempStream.Position = 0;
                             pdbTempStream.CopyTo(pdbStream);
@@ -1666,7 +1666,7 @@ namespace Microsoft.CodeAnalysis
                 {
                     peTempStream?.Dispose();
                     pdbTempStream?.Dispose();
-                    pdbWriter?.Dispose();
+                    nativePdbWriter?.Dispose();
                     signingInputStream?.Dispose();
                     pdbBag?.Free();
                     metadataDiagnostics?.Free();

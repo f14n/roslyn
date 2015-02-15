@@ -150,15 +150,15 @@ Namespace Microsoft.VisualStudio.LanguageServices.UnitTests.Diagnostics
             Public Sub Reanalyze(workspace As Workspace, Optional projectIds As IEnumerable(Of ProjectId) = Nothing, Optional documentIds As IEnumerable(Of DocumentId) = Nothing) Implements IDiagnosticAnalyzerService.Reanalyze
             End Sub
 
-            Public Function GetAllDiagnosticDescriptors(projectOpt As Project) As IReadOnlyDictionary(Of String, IEnumerable(Of DiagnosticDescriptor)) Implements IDiagnosticAnalyzerService.GetAllDiagnosticDescriptors
-                Return New Dictionary(Of String, IEnumerable(Of DiagnosticDescriptor))()
+            Public Function GetDiagnosticDescriptors(projectOpt As Project) As ImmutableDictionary(Of String, ImmutableArray(Of DiagnosticDescriptor)) Implements IDiagnosticAnalyzerService.GetDiagnosticDescriptors
+                Return ImmutableDictionary(Of String, ImmutableArray(Of DiagnosticDescriptor)).Empty
             End Function
 
             Public Function GetDiagnosticsForSpanAsync(document As Document, range As TextSpan, cancellationToken As CancellationToken) As Task(Of IEnumerable(Of DiagnosticData)) Implements IDiagnosticAnalyzerService.GetDiagnosticsForSpanAsync
                 Return Task.FromResult(SpecializedCollections.EmptyEnumerable(Of DiagnosticData))
             End Function
 
-            Public Function TryGetDiagnosticsForSpanAsync(document As Document, range As TextSpan, diagnostics As List(Of DiagnosticData), cancellationToken As CancellationToken) As Task(Of Boolean) Implements IDiagnosticAnalyzerService.TryGetDiagnosticsForSpanAsync
+            Public Function TryAppendDiagnosticsForSpanAsync(document As Document, range As TextSpan, diagnostics As List(Of DiagnosticData), cancellationToken As CancellationToken) As Task(Of Boolean) Implements IDiagnosticAnalyzerService.TryAppendDiagnosticsForSpanAsync
                 Return Task.FromResult(False)
             End Function
 

@@ -67,10 +67,17 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation.PreviewPane
         {
             var telemetry = diagnostic == null ? false : diagnostic.Descriptor.CustomTags.Contains(WellKnownDiagnosticTags.Telemetry);
 
+            if ((diagnostic == null) && (previewContent == null))
+            {
+                // Bail out in cases where there is no diagnostic (which means there is nothing to put in
+                // the header section of the preview pane) as well as no preview content (i.e. no diff view).
+                return null;
+            }
+
             if ((diagnostic == null) || (diagnostic.Descriptor is TriggerDiagnosticDescriptor))
             {
-                // We don't have any additional info to display in the preview pane.
-                return previewContent;
+                return new PreviewPane(
+                    null, null, null, null, null, null, telemetry, previewContent, _serviceProvider);
             }
             else
             {

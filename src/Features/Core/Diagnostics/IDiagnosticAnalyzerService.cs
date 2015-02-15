@@ -54,7 +54,7 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         /// it will return true if it was able to return all up-to-date diagnostics.
         ///  otherwise, false indicating there are some missing diagnostics in the diagnostic list
         /// </summary>
-        Task<bool> TryGetDiagnosticsForSpanAsync(Document document, TextSpan range, List<DiagnosticData> diagnostics, CancellationToken cancellationToken);
+        Task<bool> TryAppendDiagnosticsForSpanAsync(Document document, TextSpan range, List<DiagnosticData> diagnostics, CancellationToken cancellationToken);
 
         /// <summary>
         /// return up to date diagnostics for the given span for the document
@@ -69,6 +69,6 @@ namespace Microsoft.CodeAnalysis.Diagnostics
         /// Otherwise, returns the global set of diagnostics enabled for the workspace.
         /// </summary>
         /// <returns>A mapping from analyzer name to the diagnostics produced by that analyzer</returns>
-        IReadOnlyDictionary<string, IEnumerable<DiagnosticDescriptor>> GetAllDiagnosticDescriptors(Project projectOpt);
+        ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptor>> GetDiagnosticDescriptors(Project projectOpt);
     }
 }

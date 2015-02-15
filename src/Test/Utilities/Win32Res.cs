@@ -13,27 +13,27 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
     public class Win32Res
     {
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr FindResource(IntPtr hModule, string lpName, string lpType);
+        private static extern IntPtr FindResource(IntPtr hModule, string lpName, string lpType);
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr LoadResource(IntPtr hModule, IntPtr hResInfo);
+        private static extern IntPtr LoadResource(IntPtr hModule, IntPtr hResInfo);
         [DllImport("kernel32.dll")]
-        static extern IntPtr LockResource(IntPtr hResData);
+        private static extern IntPtr LockResource(IntPtr hResData);
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern uint SizeofResource(IntPtr hModule, IntPtr hResInfo);
+        private static extern uint SizeofResource(IntPtr hModule, IntPtr hResInfo);
 
         public static IntPtr GetResource(IntPtr lib, string resourceId, string resourceType, out uint size)
         {
             IntPtr hrsrc = FindResource(lib, resourceId, resourceType);
-            if (hrsrc.ToInt32() == 0)
+            if (hrsrc == IntPtr.Zero)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
 
             size = SizeofResource(lib, hrsrc);
             IntPtr resource = LoadResource(lib, hrsrc);
-            if (resource.ToInt32() == 0)
+            if (resource == IntPtr.Zero)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
 
             IntPtr manifest = LockResource(resource);
-            if (resource.ToInt32() == 0)
+            if (resource == IntPtr.Zero)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
 
             return manifest;
@@ -42,7 +42,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
         private static string GetManifestString(IntPtr ptr, int offset, int length, Encoding encoding)
         {
             byte[] fullmanif = new byte[length];
-            Marshal.Copy((IntPtr)(ptr.ToInt32() + offset), fullmanif, 0, length);
+            Marshal.Copy((IntPtr)(ptr.ToInt64() + offset), fullmanif, 0, length);
             return encoding.GetString(fullmanif, 0, length);
         }
 
@@ -232,7 +232,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
             return sw.ToString();
         }
 
-        static Tuple<string, string> GetVerStringPair(BinaryReader reader)
+        private static Tuple<string, string> GetVerStringPair(BinaryReader reader)
         {
             System.Diagnostics.Debug.Assert((reader.BaseStream.Position & 3) == 0);
             long startPos = reader.BaseStream.Position;
